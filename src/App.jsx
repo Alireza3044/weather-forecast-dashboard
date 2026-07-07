@@ -9,9 +9,13 @@ function App() {
   const [forcastDays, setForcastDays] = useState(3)
   const [forcastType, setForcastType] = useState("Sky Condition")
   const [weatherData, setWeatherData] = useState([])
+  const [loaded, setLoaded] = useState(false)
 
   async function getForcasts(e) {
     e.preventDefault()
+    setWeatherData([])
+    setLoaded(false)
+
     const data = await getWeatherData(forcastPlace, forcastDays)
 
     const datetimes = data.map(item => item.dt_txt)
@@ -27,6 +31,7 @@ function App() {
       })
     }
     setWeatherData(wData)
+    setLoaded(true)
   }
 
   return (
@@ -71,19 +76,19 @@ function App() {
           </select>
         </div>
       </form>
-      {forcastPlace && (
+      {loaded && forcastPlace && (
         <h2>
           {`${forcastType} for the next ${forcastDays} day${forcastDays > 1 ? 's' : ''} in ${forcastPlace}:`}
         </h2>
       )}
-      {weatherData && (
+      {loaded && forcastType === "Sky Condition" && weatherData && (
         <div className="weather-cards-container">
           {weatherData.map(weather => (
             <div className="weather-card">
               <img
-                src={"src/assets/images/" + (weather.condition == "Clear" ? "clear.png"
-                  : weather.condition == "Clouds" ? "clouds.png"
-                    : weather.condition == "Rain" ? "rain.png"
+                src={"src/assets/images/" + (weather.condition === "Clear" ? "clear.png"
+                  : weather.condition === "Clouds" ? "clouds.png"
+                    : weather.condition === "Rain" ? "rain.png"
                       : "snow.png"
                 )}
                 alt={"Condition of " + weather.condition}
