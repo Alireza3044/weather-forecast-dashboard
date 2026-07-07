@@ -1,5 +1,6 @@
 import { useState } from "react"
 import "./assets/css/app.css"
+import getWeatherData from "./request"
 
 const API_KEY = import.meta.env.VITE_API_KEY
 
@@ -7,10 +8,25 @@ function App() {
   const [forcastPlace, setForcastPlace] = useState("")
   const [forcastDays, setForcastDays] = useState(3)
   const [forcastType, setForcastType] = useState("Sky Condition")
+  const [weatherData, setWeatherData] = useState([])
 
-  function getForcasts(e) {
+  async function getForcasts(e) {
     e.preventDefault()
-    console.log(e)
+    const data = await getWeatherData(forcastPlace, forcastDays)
+
+    const datetimes = data.map(item => item.dt_txt)
+    const temps = data.map(item => item.main.temp)
+    const conditions = data.map(item => item.weather[0].main)
+
+    let wData = []
+    for (let i=0; i<24; i++) {
+      wData.push({
+        "datetime": datetimes[i],
+        "temp": temps[i],
+        "condition": conditions[i]
+      })
+    }
+    setWeatherData(wData)
   }
 
   return (
@@ -60,7 +76,16 @@ function App() {
           {`${forcastType} for the next ${forcastDays} day${forcastDays > 1 ? 's' : ''} in ${forcastPlace}:`}
         </h2>
       )}
-      <div></div>
+      {weatherData && (
+        <div className="weather-cards-container">
+          {weatherData.map(weather => (
+            <div className="weather-card">
+              <img src="" alt={"Condition of " + weather.condition} />
+              <p>{weather.datetime}</p>
+            </div>
+          ))}
+        </div>
+      )}
     </main>
   )
 }
