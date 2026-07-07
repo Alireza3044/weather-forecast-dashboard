@@ -1,16 +1,20 @@
 import { useState } from "react"
 import "./assets/css/app.css"
+import getWeatherForecastData from "./request"
 
-const API_KEY = import.meta.env.VITE_API_KEY
+// TODO: Fetch weather data from API
+// TODO: Find a library to graph the data
+// TODO: Implement the Temperature data return
 
 function App() {
   const [forcastPlace, setForcastPlace] = useState("")
   const [forcastDays, setForcastDays] = useState(3)
   const [forcastType, setForcastType] = useState("Sky Condition")
 
-  function getForcasts(e) {
+  async function getForcasts(e) {
     e.preventDefault()
-    console.log(e)
+    const data = await getWeatherForecastData(forcastPlace, forcastDays, forcastType)
+    console.log(data)
   }
 
   return (
