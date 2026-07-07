@@ -19,7 +19,7 @@ function App() {
     const conditions = data.map(item => item.weather[0].main)
 
     let wData = []
-    for (let i=0; i<24; i++) {
+    for (let i = 0; i < 24; i++) {
       wData.push({
         "datetime": datetimes[i],
         "temp": temps[i],
@@ -80,7 +80,14 @@ function App() {
         <div className="weather-cards-container">
           {weatherData.map(weather => (
             <div className="weather-card">
-              <img src="" alt={"Condition of " + weather.condition} />
+              <img
+                src={"src/assets/images/" + (weather.condition == "Clear" ? "clear.png"
+                  : weather.condition == "Clouds" ? "clouds.png"
+                    : weather.condition == "Rain" ? "rain.png"
+                      : "snow.png"
+                )}
+                alt={"Condition of " + weather.condition}
+              />
               <p>{weather.datetime}</p>
             </div>
           ))}
