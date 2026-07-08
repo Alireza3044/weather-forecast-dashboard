@@ -1,4 +1,7 @@
-/* background-color: #262730; */
+@font-face {
+  font-family: "Open Sans";
+  src: url("src/assets/fonts/OpenSans-Medium.ttf");
+}
 
 /* --- 1. CSS Custom Properties (theme) ----------------------------------- */
 :root {
@@ -27,15 +30,7 @@ html,
 body,
 #root {
   height: 100%;
-  font-family:
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    "Helvetica Neue",
-    Arial,
-    sans-serif;
+  font-family: "Open Sans", sans-serif;
   font-size: var(--font-size-base);
   line-height: 1.5;
   color: var(--text);
@@ -126,6 +121,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
   border: 1px solid #ced4da;
   border-radius: var(--radius);
   background-color: var(--surface);
+  font-family: inherit;
   font-size: var(--font-size-base);
   cursor: pointer;
   transition: border-color 0.15s;
