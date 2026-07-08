@@ -1,8 +1,11 @@
 import { useState } from "react"
 import "./assets/css/app.css"
 import getWeatherData from "./request"
+import dayjs from "dayjs"
+import utc from "dayjs/plugin/utc"
 
-// TODO: Fetch weather data from API
+dayjs.extend(utc)
+
 // TODO: Find a library to graph the data
 // TODO: Implement the Temperature data return
 
@@ -20,7 +23,11 @@ function App() {
 
     const data = await getWeatherData(forcastPlace, forcastDays)
 
-    const datetimes = data.map(item => item.dt_txt)
+    const datetimes = data.map(item => {
+      // Local Time
+      const dt = dayjs.utc(item.dt_txt).local().toString()
+      return dt.substr(5, 7) + dt.substr(17, 5)
+    })
     const temps = data.map(item => item.main.temp)
     const conditions = data.map(item => item.weather[0].main)
 
@@ -86,7 +93,7 @@ function App() {
       {loaded && forcastType === "Sky Condition" && weatherData && (
         <div className="weather-cards-container">
           {weatherData.map(weather => (
-            <div className="weather-card">
+            <div className="weather-card" key={crypto.randomUUID()}>
               <img
                 src={"src/assets/images/" + (weather.condition === "Clear" ? "clear.png"
                   : weather.condition === "Clouds" ? "clouds.png"
