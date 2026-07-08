@@ -1,6 +1,6 @@
 import { useState } from "react"
 import "./assets/css/app.css"
-import getWeatherForecastData from "./request"
+import getWeatherData from "./request"
 
 // TODO: Fetch weather data from API
 // TODO: Find a library to graph the data
@@ -10,11 +10,30 @@ function App() {
   const [forcastPlace, setForcastPlace] = useState("")
   const [forcastDays, setForcastDays] = useState(3)
   const [forcastType, setForcastType] = useState("Sky Condition")
+  const [weatherData, setWeatherData] = useState([])
+  const [loaded, setLoaded] = useState(false)
 
   async function getForcasts(e) {
     e.preventDefault()
-    const data = await getWeatherForecastData(forcastPlace, forcastDays, forcastType)
-    console.log(data)
+    setWeatherData([])
+    setLoaded(false)
+
+    const data = await getWeatherData(forcastPlace, forcastDays)
+
+    const datetimes = data.map(item => item.dt_txt)
+    const temps = data.map(item => item.main.temp)
+    const conditions = data.map(item => item.weather[0].main)
+
+    let wData = []
+    for (let i = 0; i < 24; i++) {
+      wData.push({
+        "datetime": datetimes[i],
+        "temp": temps[i],
+        "condition": conditions[i]
+      })
+    }
+    setWeatherData(wData)
+    setLoaded(true)
   }
 
   return (
@@ -59,12 +78,28 @@ function App() {
           </select>
         </div>
       </form>
-      {forcastPlace && (
+      {loaded && forcastPlace && (
         <h2>
           {`${forcastType} for the next ${forcastDays} day${forcastDays > 1 ? 's' : ''} in ${forcastPlace}:`}
         </h2>
       )}
-      <div></div>
+      {loaded && forcastType === "Sky Condition" && weatherData && (
+        <div className="weather-cards-container">
+          {weatherData.map(weather => (
+            <div className="weather-card">
+              <img
+                src={"src/assets/images/" + (weather.condition === "Clear" ? "clear.png"
+                  : weather.condition === "Clouds" ? "clouds.png"
+                    : weather.condition === "Rain" ? "rain.png"
+                      : "snow.png"
+                )}
+                alt={"Condition of " + weather.condition}
+              />
+              <p>{weather.datetime}</p>
+            </div>
+          ))}
+        </div>
+      )}
     </main>
   )
 }
